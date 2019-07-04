@@ -30,110 +30,114 @@ def load_image(filename):
     return photo
 
 
-class Sistema():
+class Sistema:
+
     def __init__(self, master):
+        self.Date1 = StringVar()
+        self.Date1.set(time.strftime("%d/%m/%Y"))
+        
+        self.create_widgets(master)
+
+    def create_widgets(self, master):
         self.frame = Frame(master)
         self.frame.pack()
         self.menu = Menu(master)
         self.menuCadastro = Menu(self.menu)
-        self.menuCadastro.add_command(label = "CATEGORIAS", command = self.cad_Cat)
-        self.menuCadastro.add_command(label = "LANCAMENTOS", command = self.cadastraContas)
-        self.menuCadastro.add_command(label = "FATURAS CARTOES", command = self.cad_Faturas)
-        self.menuCadastro.add_command(label = "TIPOS PAGAMENTOS", command = self.cad_Tipos_Pgto)
-        self.menuCadastro.add_command(label = "Sair",command = root.destroy)
-        self.menu.add_cascade(label='CADASTRAR', menu = self.menuCadastro)
-
+        self.menuCadastro.add_command(label="CATEGORIAS", command=self.cad_Cat)
+        self.menuCadastro.add_command(label="LANCAMENTOS", command=self.cadastraContas)
+        self.menuCadastro.add_command(label="FATURAS CARTOES", command=self.cad_Faturas)
+        self.menuCadastro.add_command(label="TIPOS PAGAMENTOS", command=self.cad_Tipos_Pgto)
+        self.menuCadastro.add_command(label="Sair", command=root.destroy)
+        self.menu.add_cascade(label='CADASTRAR', menu=self.menuCadastro)
 
         self.menuConsulta = Menu(self.menu)
-        self.menuConsulta.add_command(label = "TODAS AS CONTAS", command = self.pesquisa_Contas)
-        self.menuConsulta.add_command(label = "FATURAS CARTÕES")#, command = self.cad_Faturas)
-        self.menuConsulta.add_command(label = "TODAS AS CATEGORIAS", command = self.pesquisa_Cat)
-        self.menuConsulta.add_command(label = "CONTAS/FILTRO", command = self.lista_Personalizada)
-        self.menuConsulta.add_command(label = "CATEGORIAS/FILTRO", command = self.lista_PersonaCat)
-        self.menuConsulta.add_command(label = "TIPOS DE PAGAMENTOS", command = self.lista_tipos_pgto)
+        self.menuConsulta.add_command(label="TODAS AS CONTAS", command=self.pesquisa_Contas)
+        self.menuConsulta.add_command(label="FATURAS CARTÕES")  # , command = self.cad_Faturas)
+        self.menuConsulta.add_command(label="TODAS AS CATEGORIAS", command=self.pesquisa_Cat)
+        self.menuConsulta.add_command(label="CONTAS/FILTRO", command=self.lista_Personalizada)
+        self.menuConsulta.add_command(label="CATEGORIAS/FILTRO", command=self.lista_PersonaCat)
+        self.menuConsulta.add_command(label="TIPOS DE PAGAMENTOS", command=self.lista_tipos_pgto)
         self.menu.add_cascade(label='CONSULTAR', menu=self.menuConsulta)
 
         self.menuSaida = Menu(self.menu)
-        self.menuSaida.add_command(label = "EXCEL MES ATUAL", command = self.gera_planilha)
-        self.menu.add_cascade(label='RELATORIOS', menu = self.menuSaida)
+        self.menuSaida.add_command(label="EXCEL MES ATUAL", command=self.gera_planilha)
+        self.menu.add_cascade(label='RELATORIOS', menu=self.menuSaida)
 
         self.menuEdita = Menu(self.menu)
-        self.menuEdita.add_command(label = "VERSAO 1.1")
-        self.menuEdita.add_command(label = "HELPDESK", command = self.help_Desk)
-        self.menuEdita.add_command(label = "MANUAL")
-        self.menu.add_cascade(label='AJUDA', menu = self.menuEdita)
+        self.menuEdita.add_command(label="VERSAO 1.1")
+        self.menuEdita.add_command(label="HELPDESK", command=self.help_Desk)
+        self.menuEdita.add_command(label="MANUAL")
+        self.menu.add_cascade(label='AJUDA', menu=self.menuEdita)
 
-        master.config(menu = self.menu)
+        master.config(menu=self.menu)
 
-
-        Date1 = StringVar()
-        Time1 = StringVar()
-
-        Date1.set(time.strftime("%d/%m/%Y"))
-        
-        
-        self.lblDate = Label(master, textvariable = Date1, font=('arial',18,'bold'),padx=1 ,pady=1,
-                        bd=10, bg="#004400",fg="Cornsilk",justify=LEFT,width = 20)
+        self.lblDate = Label(master, textvariable=self.Date1, font=('arial', 18, 'bold'), padx=1, pady=1,
+                             bd=10, bg="#004400", fg="Cornsilk", justify=LEFT, width=20)
         self.lblDate.pack()
 
         self.imagem1 = load_image('Button-exit-icon.png')
         self.imagem3 = load_image('logo.png')
-        
-        
-        self.frame1 = Frame(master, width = 450, height = 600, bd = 8,relief = "raise")
-        self.frame1.pack(side = LEFT)
 
-        self.frame2 = Frame(master, width = 300, height = 600, bd = 8,relief = "raise")
-        self.frame2.pack(side = RIGHT)
+        self.frame1 = Frame(master, width=450, height=600, bd=8, relief="raise")
+        self.frame1.pack(side=LEFT)
 
-     
-        self.busca_persomes = Button(self.frame2, text ='LISTAR CONTAS MES ATUAL ',pady=1,bg ='RoyalBlue1', padx=1,bd=2, width = 30, height = 2,
-                          font = ('Arial', 12,'bold'), fg ='black', command = self.pesquisa_Contas_mes)
-        self.busca_persomes.place(x = 0, y=0)
+        self.frame2 = Frame(master, width=300, height=600, bd=8, relief="raise")
+        self.frame2.pack(side=RIGHT)
 
-        self.busca_persomes_paga = Button(self.frame2, text ='CONTAS MES ATUAL PAGAS ',pady=1,bg ='RoyalBlue1', padx=1,bd=2, width = 30, height = 2,
-                          font = ('Arial', 12,'bold'), fg ='black', command = self.pesquisa_Contas_mes_pagas)
-        self.busca_persomes_paga.place(x = 0, y=60)
+        self.busca_persomes = Button(self.frame2, text='LISTAR CONTAS MES ATUAL ', pady=1, bg='RoyalBlue1', padx=1,
+                                     bd=2, width=30, height=2,
+                                     font=('Arial', 12, 'bold'), fg='black', command=self.pesquisa_Contas_mes)
+        self.busca_persomes.place(x=0, y=0)
 
-        self.busca_persomes_aberto = Button(self.frame2, text ='CONTAS MES ATUAL ABERTO ',pady=1,bg ='RoyalBlue1', padx=1,bd=2, width = 30, height = 2,
-                          font = ('Arial', 12,'bold'), fg ='black', command = self.pesquisa_Contas_mes_Aberto)
-        self.busca_persomes_aberto.place(x = 0, y=120)
+        self.busca_persomes_paga = Button(self.frame2, text='CONTAS MES ATUAL PAGAS ', pady=1, bg='RoyalBlue1', padx=1,
+                                          bd=2, width=30, height=2,
+                                          font=('Arial', 12, 'bold'), fg='black',
+                                          command=self.pesquisa_Contas_mes_pagas)
+        self.busca_persomes_paga.place(x=0, y=60)
 
-        self.btn_contas = Button(self.frame1, text='LANÇAMENTOS-DÉBITOS', pady=1,bg ='RoyalBlue1', padx=1,bd=2, width = 30, height = 2,
-                          font = ('Arial', 12,'bold'), fg ='black',command= self.cadastraContas)
-        self.btn_contas.place(x = 0, y=0)
+        self.busca_persomes_aberto = Button(self.frame2, text='CONTAS MES ATUAL ABERTO ', pady=1, bg='RoyalBlue1',
+                                            padx=1, bd=2, width=30, height=2,
+                                            font=('Arial', 12, 'bold'), fg='black',
+                                            command=self.pesquisa_Contas_mes_Aberto)
+        self.busca_persomes_aberto.place(x=0, y=120)
 
-        self.btn_creditos = Button(self.frame1, text='LANÇAMENTOS-CRÉDITOS', pady=1,bg ='RoyalBlue1', padx=1,bd=2, width = 30, height = 2,
-                          font = ('Arial', 12,'bold'), fg ='black',command= self.add_entradas)
-        self.btn_creditos.place(x = 0, y=50)
+        self.btn_contas = Button(self.frame1, text='LANÇAMENTOS-DÉBITOS', pady=1, bg='RoyalBlue1', padx=1, bd=2,
+                                 width=30, height=2,
+                                 font=('Arial', 12, 'bold'), fg='black', command=self.cadastraContas)
+        self.btn_contas.place(x=0, y=0)
 
+        self.btn_creditos = Button(self.frame1, text='LANÇAMENTOS-CRÉDITOS', pady=1, bg='RoyalBlue1', padx=1, bd=2,
+                                   width=30, height=2,
+                                   font=('Arial', 12, 'bold'), fg='black', command=self.add_entradas)
+        self.btn_creditos.place(x=0, y=50)
 
-        self.btn_sair = Button(self.frame1, pady=1,bg ='light blue', padx=1,bd=2, width = 120, height = 120,
-                             command=root.destroy, image=self.imagem1)
-        self.btn_sair.place(x= 305, y=0)
-        
+        self.btn_sair = Button(self.frame1, pady=1, bg='light blue', padx=1, bd=2, width=120, height=120,
+                               command=root.destroy, image=self.imagem1)
+        self.btn_sair.place(x=305, y=0)
 
-        self.texto_logo = Label(self.frame1, text='DESENVOLVIDO POR JS INFORMÁTICA ',pady=2,bg ='RoyalBlue1', padx=2,bd=2, width = 47, height = 2,
-                          font = ('Arial', 12,'bold'), fg ='black')
+        self.texto_logo = Label(self.frame1, text='DESENVOLVIDO POR JS INFORMÁTICA ', pady=2, bg='RoyalBlue1', padx=2,
+                                bd=2, width=47, height=2,
+                                font=('Arial', 12, 'bold'), fg='black')
         self.texto_logo.place(x=0, y=270)
-        self.btn_logo = Label(self.frame1, text='', pady=1,bg ='light blue', padx=1,bd=2, width = 427, height = 250, image=self.imagem3)
-        self.btn_logo.place(x= 0, y=317)
-        
+        self.btn_logo = Label(self.frame1, text='', pady=1, bg='light blue', padx=1, bd=2, width=427, height=250,
+                              image=self.imagem3)
+        self.btn_logo.place(x=0, y=317)
 
-        self.btn_busca_Totais = Button(self.frame2, text='TOTAIS POR TIPO DE PGTO',bg='RoyalBlue1',pady=1,padx=1,bd=2, width = 30, height = 2,
-                          font = ('Arial', 12,'bold'), fg ='black', command = self.lista_Totais_pgto)
-        self.btn_busca_Totais.place(x = 0, y=180)
-        
-        self.btn_busca_conta = Button(self.frame2, text='LISTAR POR CATEGORIAS',bg='RoyalBlue1',pady=1,padx=1,bd=2, width = 30, height = 2,
-                          font = ('Arial', 12,'bold'), fg ='black',command = self.lista_Personalizada_Cat)
-        self.btn_busca_conta.place(x = 0, y=240)
+        self.btn_busca_Totais = Button(self.frame2, text='TOTAIS POR TIPO DE PGTO', bg='RoyalBlue1', pady=1, padx=1,
+                                       bd=2, width=30, height=2,
+                                       font=('Arial', 12, 'bold'), fg='black', command=self.lista_Totais_pgto)
+        self.btn_busca_Totais.place(x=0, y=180)
 
-        self.btn_busca_todos = Button(self.frame2, text='CONTAS PERSONALIZ.',bg='RoyalBlue1',pady=1,padx=1,bd=2, width = 30, height = 2,
-                          font = ('Arial', 12,'bold'), fg ='black', command = self.lista_Personalizada)
-        self.btn_busca_todos.place(x = 0, y = 300)
+        self.btn_busca_conta = Button(self.frame2, text='LISTAR POR CATEGORIAS', bg='RoyalBlue1', pady=1, padx=1, bd=2,
+                                      width=30, height=2,
+                                      font=('Arial', 12, 'bold'), fg='black', command=self.lista_Personalizada_Cat)
+        self.btn_busca_conta.place(x=0, y=240)
 
+        self.btn_busca_todos = Button(self.frame2, text='CONTAS PERSONALIZ.', bg='RoyalBlue1', pady=1, padx=1, bd=2,
+                                      width=30, height=2,
+                                      font=('Arial', 12, 'bold'), fg='black', command=self.lista_Personalizada)
+        self.btn_busca_todos.place(x=0, y=300)
 
-    
     def help_Desk(self):
         url = "http://192.168.10.90/glpi/"
         webbrowser.open(url)
