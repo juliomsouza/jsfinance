@@ -4,6 +4,7 @@ from mysql.connector import errorcode
 from tkinter import *
 from tkinter import ttk
 from tkinter import messagebox
+from PIL import Image, ImageTk
 import webbrowser
 import datetime
 import os
@@ -11,6 +12,13 @@ import sys
 import time;
 import xlwt
 #import csv
+
+
+
+def load_image(filename):
+    image = Image.open(filename)
+    photo = ImageTk.PhotoImage(image)
+    return photo
 
 
 class Sistema():
@@ -59,10 +67,8 @@ class Sistema():
                         bd=10, bg="#004400",fg="Cornsilk",justify=LEFT,width = 20)
         self.lblDate.pack()
 
-        #self.imagem1 = PhotoImage(file="//Users//henrique//workspace//jsfinance//Button-exit-icon.png//")
-        #self.imagem3 = PhotoImage(file="logo.png//")
-        #self.imagem2 = PhotoImage(file="contas.png")
-
+        self.imagem1 = load_image('Button-exit-icon.png')
+        self.imagem3 = load_image('logo.png')
         
         
         self.frame1 = Frame(master, width = 450, height = 600, bd = 8,relief = "raise")
@@ -94,14 +100,14 @@ class Sistema():
 
 
         self.btn_sair = Button(self.frame1, pady=1,bg ='light blue', padx=1,bd=2, width = 120, height = 120,
-                             command=root.destroy) #image=self.imagem1
+                             command=root.destroy, image=self.imagem1)
         self.btn_sair.place(x= 305, y=0)
         
 
         self.texto_logo = Label(self.frame1, text='DESENVOLVIDO POR JS INFORMÁTICA ',pady=2,bg ='RoyalBlue1', padx=2,bd=2, width = 47, height = 2,
                           font = ('Arial', 12,'bold'), fg ='black')
         self.texto_logo.place(x=0, y=270)
-        self.btn_logo = Label(self.frame1, text='', pady=1,bg ='light blue', padx=1,bd=2, width = 427, height = 250) #image=self.imagem3,
+        self.btn_logo = Label(self.frame1, text='', pady=1,bg ='light blue', padx=1,bd=2, width = 427, height = 250, image=self.imagem3)
         self.btn_logo.place(x= 0, y=317)
         
 
