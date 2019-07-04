@@ -14,6 +14,15 @@ import xlwt
 #import csv
 
 
+def connect():
+    return mysql.connector.connect(
+        user='root',
+        password='',
+        host='127.0.0.1',
+        database='FINANCAS',
+        port='3306'
+    )
+
 
 def load_image(filename):
     image = Image.open(filename)
@@ -130,8 +139,7 @@ class Sistema():
         webbrowser.open(url)
         
     def ultimo_registro(self):
-        cnx = mysql.connector.connect(user='root', password='',
-                                   host='127.0.0.1',database='FINANCAS', port = '3306')
+        cnx = connect()
         
         cursor = cnx.cursor()
         
@@ -278,8 +286,7 @@ class Sistema():
             self.Proximo_Id()
         
     def Proximo_Id(self):
-        cnx = mysql.connector.connect(user='root', password='',
-                              host='127.0.0.1',database='FINANCAS', port = '3306')
+        cnx = connect()
         
         cursor = cnx.cursor()
         
@@ -298,8 +305,7 @@ class Sistema():
             
 
     def list_pgto(self):
-        cnx = mysql.connector.connect(user='root', password='',
-                              host='127.0.0.1',database='FINANCAS', port = '3306')
+        cnx = connect()
         cursor = cnx.cursor()
         cursor.execute("SELECT DESC_PGTO FROM TIPO_PAGTO")
         result = []
@@ -317,8 +323,7 @@ class Sistema():
     
     def grav_contas(self):
         self.desabilita_deletar_conta()
-        cnx = mysql.connector.connect(user='root', password='',
-                              host='127.0.0.1',database='FINANCAS', port = '3306')
+        cnx = connect()
         cursor = cnx.cursor()
 
         idcat = self.id_cat.get()
@@ -391,8 +396,7 @@ class Sistema():
         
     def View_Contas(self):
   
-        cnx = mysql.connector.connect(user='root', password='',
-                              host='127.0.0.1',database='FINANCAS', port = '3306')
+        cnx = connect()
         cursor = cnx.cursor()
         cursor.execute("SELECT C.IDCONTA,C.ID_CAT, F.DESC_CAT, C.VALOR,C.DATA_COMPRA,DATA_VENCIMENTO,C.PAGO,C.DATA_PGTO,C.TIPO_PGTO,C.OBS FROM CONTAS_PAGAR \
                         AS C INNER JOIN CATEGORIAS AS F ON C.ID_CAT=F.ID_CAT ORDER BY C.IDCONTA")
@@ -451,8 +455,7 @@ class Sistema():
     def Completar(self, event):#TRAZ A CATEGORIA
         self.id_cat.delete(0,END)
         self.categoria.delete(0,END)
-        cnx = mysql.connector.connect(user='root', password='',
-                              host='127.0.0.1',database='FINANCAS', port = '3306')
+        cnx = connect()
         cursor = cnx.cursor()
         
         try:
@@ -472,8 +475,7 @@ class Sistema():
     #    PAGAR CONTA
     def atualiza_Contas(self):
       
-        cnx = mysql.connector.connect(user='root', password='',
-                              host='127.0.0.1',database='FINANCAS', port = '3306')
+        cnx = connect()
         cursor = cnx.cursor()
         idconta = self.id_contae.get()
         valorconta = self.valorcontae.get()
@@ -506,8 +508,7 @@ class Sistema():
         self.desabilitaGravar()
         self.habilita_alterar()
         self.habilita_deletar_conta()
-        cnx = mysql.connector.connect(user='root', password='',
-                              host='127.0.0.1',database='FINANCAS', port = '3306')
+        cnx = connect()
         cursor = cnx.cursor()
         
         cursor.execute("SELECT C.ID_CAT,F.DESC_CAT,C.VALOR, C.DATA_COMPRA,C.DATA_VENCIMENTO,C.PAGO,C.DATA_PGTO,C.TIPO_PGTO, C.OBS FROM \
@@ -530,8 +531,7 @@ class Sistema():
 
     def deletar_conta(self):
         self.desabilitaGravar()
-        cnx = mysql.connector.connect(user='root', password='',
-                              host='127.0.0.1',database='FINANCAS', port = '3306')
+        cnx = connect()
         cursor = cnx.cursor()
         
         sql = "DELETE FROM CONTAS_PAGAR WHERE IDCONTA = '"+self.id_contae.get()+"' "
@@ -582,8 +582,7 @@ class Sistema():
 
     def View_Contas_Mes(self):
   
-        cnx = mysql.connector.connect(user='root', password='',
-                              host='127.0.0.1',database='FINANCAS', port = '3306')
+        cnx = connect()
         cursor = cnx.cursor()
         #cursor.execute("SELECT * FROM CONTAS_PAGAR ORDER BY IDCONTA ")
         cursor.execute("SELECT C.IDCONTA,C.ID_CAT, F.DESC_CAT, C.VALOR,C.DATA_COMPRA,DATA_VENCIMENTO,C.PAGO,C.DATA_PGTO,C.TIPO_PGTO,C.OBS FROM CONTAS_PAGAR \
@@ -598,8 +597,7 @@ class Sistema():
     def pesquisa_Contas_mes(self):
         ''' TRAZ TODAS AS CONTAS DO MÊS '''
         self.consulta_mes = Toplevel()
-        cnx = mysql.connector.connect(user='root', password='',
-                              host='127.0.0.1',database='FINANCAS', port = '3306')
+        cnx = connect()
         cursor = cnx.cursor()
         cursor.execute("SELECT SUM(VALOR) FROM CONTAS_PAGAR WHERE  MONTH(DATA_VENCIMENTO) = MONTH(NOW())")
         row=cursor.fetchone()        
@@ -660,8 +658,7 @@ class Sistema():
     def View_Contas_Mes_Pagas(self):
         ''' PESQUISA CONTAS DO MÊS ATUAL NA TELA PRINCIPAL PAGAS '''
 
-        cnx = mysql.connector.connect(user='root', password='',
-                              host='127.0.0.1',database='FINANCAS', port = '3306')
+        cnx = connect()
         cursor = cnx.cursor()
         cursor.execute("SELECT C.IDCONTA,C.ID_CAT, F.DESC_CAT, C.VALOR,C.DATA_COMPRA,DATA_VENCIMENTO,C.PAGO,C.DATA_PGTO,C.TIPO_PGTO,C.OBS FROM CONTAS_PAGAR \
                         AS C INNER JOIN CATEGORIAS AS F ON C.ID_CAT=F.ID_CAT WHERE  MONTH(C.DATA_VENCIMENTO) = MONTH(NOW()) AND C.PAGO ='SIM'")
@@ -675,8 +672,7 @@ class Sistema():
         
     def pesquisa_Contas_mes_pagas(self):
         self.consulta_mes_paga = Toplevel()
-        cnx = mysql.connector.connect(user='root', password='',
-                              host='127.0.0.1',database='FINANCAS', port = '3306')
+        cnx = connect()
         cursor = cnx.cursor()
         #cursor.execute("SELECT * FROM CONTAS_PAGAR ORDER BY IDCONTA ")
         cursor.execute("SELECT SUM(VALOR) FROM CONTAS_PAGAR WHERE  MONTH(DATA_VENCIMENTO) = MONTH(NOW()) AND PAGO ='SIM'")
@@ -733,8 +729,7 @@ class Sistema():
 
     def View_Contas_Mes_Aberto(self):
   
-        cnx = mysql.connector.connect(user='root', password='',
-                              host='127.0.0.1',database='FINANCAS', port = '3306')
+        cnx = connect()
         cursor = cnx.cursor()
         #cursor.execute("SELECT * FROM CONTAS_PAGAR ORDER BY IDCONTA ")
         cursor.execute("SELECT C.IDCONTA,C.ID_CAT, F.DESC_CAT, C.VALOR,C.DATA_COMPRA,DATA_VENCIMENTO,C.PAGO,C.DATA_PGTO,C.TIPO_PGTO,C.OBS FROM CONTAS_PAGAR \
@@ -748,8 +743,7 @@ class Sistema():
         
     def pesquisa_Contas_mes_Aberto(self):
         self.consulta_mes_aberto = Toplevel()
-        cnx = mysql.connector.connect(user='root', password='',
-                              host='127.0.0.1',database='FINANCAS', port = '3306')
+        cnx = connect()
         cursor = cnx.cursor()
         cursor.execute("SELECT SUM(VALOR) FROM CONTAS_PAGAR WHERE  MONTH(DATA_VENCIMENTO) = MONTH(NOW()) AND PAGO ='NAO'")
 
@@ -859,8 +853,7 @@ class Sistema():
     
 
     def gravaCat(self):
-        cnx = mysql.connector.connect(user='root', password='',
-                              host='127.0.0.1',database='FINANCAS', port = '3306')
+        cnx = connect()
         cursor = cnx.cursor()
 
         descricao = self.editdescricao.get().upper()
@@ -900,8 +893,7 @@ class Sistema():
     # UPDATE Categorias
     def pesquisar_Cat(self,event):
         self.desabilita_Cat()
-        cnx = mysql.connector.connect(user='root', password='',
-                              host='127.0.0.1',database='FINANCAS', port = '3306')
+        cnx = connect()
         cursor = cnx.cursor()
         
         cursor.execute("SELECT * FROM CATEGORIAS WHERE ID_CAT = '"+self.editidcat.get()+"' ")
@@ -918,8 +910,7 @@ class Sistema():
 
      # UPDATE CATEGORIAS
     def atualiza_Cat(self):
-        cnx = mysql.connector.connect(user='root', password='',
-                              host='127.0.0.1',database='FINANCAS', port = '3306')
+        cnx = connect()
         cursor = cnx.cursor()
         idcat = self.editidcat.get()
         descricao = self.editdescricao.get().upper()
@@ -957,8 +948,7 @@ class Sistema():
 
 
     def View_Cat(self):# categorias
-        cnx = mysql.connector.connect(user='root', password='',
-                              host='127.0.0.1',database='FINANCAS', port = '3306')
+        cnx = connect()
         cursor = cnx.cursor()
         cursor.execute("SELECT * FROM CATEGORIAS ORDER  BY ID_CAT ")
         rows=cursor.fetchall()
@@ -1040,8 +1030,7 @@ class Sistema():
 
     def View_Lista_For(self):#Query que traz do banco todas informacoes da lisat personalizada solicitadas
 
-        cnx = mysql.connector.connect(user='root', password='',
-                              host='127.0.0.1',database='FINANCAS', port = '3306')
+        cnx = connect()
         cursor = cnx.cursor()
 
         cursor.execute("SELECT * FROM CATEGORIAS WHERE DESCRICAO like '%"+self.editdescricao.get()+"%' ")
@@ -1108,8 +1097,7 @@ class Sistema():
         self.y_index = 0
         self.x_counter = 0
 
-        cnx = mysql.connector.connect(user='root', password='',
-                              host='127.0.0.1',database='FINANCAS', port = '3306')
+        cnx = connect()
         cursor = cnx.cursor()
         cursor.execute("SELECT TIPO_PGTO, SUM(VALOR)  FROM  CONTAS_PAGAR WHERE MONTH(DATA_VENCIMENTO) = MONTH(NOW())  GROUP BY TIPO_PGTO")        
         rows=cursor.fetchall()
@@ -1224,8 +1212,7 @@ class Sistema():
         
 
     def gravaFatura(self):
-        cnx = mysql.connector.connect(user='root', password='',
-                              host='127.0.0.1',database='FINANCAS', port = '3306')
+        cnx = connect()
         cursor = cnx.cursor()
         descfat = self.combo6.get().upper()
         if self.combo6.get() == '':
@@ -1258,8 +1245,7 @@ class Sistema():
 
 #     EDITAR FATURA PAGA/NÃO PAGO
     def edita_Fatura(self):
-        cnx = mysql.connector.connect(user='root', password='',
-                              host='127.0.0.1',database='FINANCAS', port = '3306')
+        cnx = connect()
         cursor = cnx.cursor()
         idfatura =self.editidfatura.get()
         descfat = self.combo6.get().upper()
@@ -1306,8 +1292,7 @@ class Sistema():
 
 
     def box_list(self):
-        cnx = mysql.connector.connect(user='root', password='',
-                              host='127.0.0.1',database='FINANCAS', port = '3306')
+        cnx = connect()
         cursor = cnx.cursor()
         cursor.execute("SELECT DESC_CARTAO FROM FATURAS")
         result = []
@@ -1323,8 +1308,7 @@ class Sistema():
 
  
     def View_Faturas(self):
-        cnx = mysql.connector.connect(user='root', password='',
-                              host='127.0.0.1',database='FINANCAS', port = '3306')
+        cnx = connect()
         cursor = cnx.cursor()
         cursor.execute("SELECT * FROM FATURAS ORDER  BY IDFATURA ")
         rows=cursor.fetchall()
@@ -1400,8 +1384,7 @@ class Sistema():
         self.cad_tipospgto.grab_set() 
 
     def grava_tipopgto(self):
-        cnx = mysql.connector.connect(user='root', password='',
-                              host='127.0.0.1',database='FINANCAS', port = '3306')
+        cnx = connect()
         cursor = cnx.cursor()
         desctipo = self.editdesc_pgto.get().upper()
         if self.editdesc_pgto.get() == '':
@@ -1433,8 +1416,7 @@ class Sistema():
 
 #   listar todos os tipos de pagamentos
     def list_tipos_pgto(self):
-        cnx = mysql.connector.connect(user='root', password='',
-                              host='127.0.0.1',database='FINANCAS', port = '3306')
+        cnx = connect()
         cursor = cnx.cursor()
         cursor.execute("SELECT * FROM TIPO_PAGTO")
         rows=cursor.fetchall()
@@ -1475,8 +1457,7 @@ class Sistema():
     def gera_planilha(self):
         workbook = xlwt.Workbook()
         worksheet = workbook.add_sheet('Contas')
-        cnx = mysql.connector.connect(user='root', password='',
-                              host='127.0.0.1',database='FINANCAS', port = '3306')
+        cnx = connect()
         cursor = cnx.cursor()
 
         cursor.execute("SELECT C.IDCONTA,C.ID_CAT, F.DESC_CAT, C.VALOR,C.DATA_COMPRA,DATA_VENCIMENTO,C.PAGO,C.DATA_PGTO,C.TIPO_PGTO,C.OBS FROM CONTAS_PAGAR \
@@ -1605,8 +1586,7 @@ class Sistema():
 
     def View_Lista_perso_Cat(self,event):#Query que traz do banco todas as Os de pagamentos entre as datas solicitadas por fornecedor(Razao)
         self.tree9.delete(*self.tree9.get_children())
-        cnx = mysql.connector.connect(user='root', password='',
-                              host='127.0.0.1',database='FINANCAS', port = '3306')
+        cnx = connect()
         cursor = cnx.cursor()
         
         cursor.execute("SELECT C.IDCONTA, C.ID_CAT,F.DESC_CAT, C.VALOR,C.DATA_COMPRA, C.DATA_VENCIMENTO,C.PAGO,C.TIPO_PGTO, C.OBS FROM CONTAS_PAGAR AS C INNER JOIN \
@@ -1623,8 +1603,7 @@ class Sistema():
 
     def soma_total_cat(self):
         self.total_categoria.delete(0, END)
-        cnx = mysql.connector.connect(user='root', password='',
-                              host='127.0.0.1',database='FINANCAS', port = '3306')
+        cnx = connect()
         cursor = cnx.cursor()
         
         cursor.execute("SELECT SUM(C.VALOR) FROM CONTAS_PAGAR AS C INNER JOIN  CATEGORIAS AS F ON C.ID_CAT = F.ID_CAT AND DATA_VENCIMENTO BETWEEN '"+self.editdataini_forn.get()+"' \
@@ -1739,8 +1718,7 @@ class Sistema():
 
     def View_Lista_perso(self):#Query que traz do banco todas as Os de pagamentos entre as datas solicitadas
         self.treepgto.delete(*self.treepgto.get_children())
-        cnx = mysql.connector.connect(user='root', password='',
-                              host='127.0.0.1',database='FINANCAS', port = '3306')
+        cnx = connect()
         cursor = cnx.cursor()
         
         cursor.execute("SELECT C.IDCONTA, C.ID_CAT,F.DESC_CAT, C.VALOR,C.DATA_COMPRA, C.DATA_VENCIMENTO,C.PAGO,C.TIPO_PGTO, C.OBS FROM CONTAS_PAGAR AS C INNER JOIN \
@@ -1758,8 +1736,7 @@ class Sistema():
 
     def total_Lista_perso(self):
         self.total_lista_personalizada.delete(0, END)
-        cnx = mysql.connector.connect(user='root', password='',
-                              host='127.0.0.1',database='FINANCAS', port = '3306')
+        cnx = connect()
         cursor = cnx.cursor()
         
         cursor.execute("SELECT SUM(C.VALOR) AS TOTAL FROM CONTAS_PAGAR AS C INNER JOIN CATEGORIAS AS F ON DATA_VENCIMENTO \
@@ -1816,8 +1793,7 @@ class Sistema():
 
     
     def gravaEntrada(self):
-        cnx = mysql.connector.connect(user='root', password='',
-                              host='127.0.0.1',database='FINANCAS', port = '3306')
+        cnx = connect()
         cursor = cnx.cursor()
 
         fonte_pgto = self.fonte_entradae.get().upper()
