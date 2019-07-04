@@ -1,6 +1,6 @@
 from mysql.connector import connect as mysql_connect
 from decouple import config
-
+from urllib.parse import urlparse
 
 def dburl(url):
     u = urlparse(url)
