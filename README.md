@@ -40,6 +40,12 @@ mysql -e 'create database JSFINANCE;'
 mysql -e 'source contrib/schema.sql;'
 ```
 
+- Popule o banco com dados de exemplo:
+
+```
+mysql -e 'source contrib/sample-data.sql;'
+```
+
 - Crie um arquivo .env com a url de conexão do banco.
 
 ```
