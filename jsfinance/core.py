@@ -1,5 +1,5 @@
 # encoding: utf-8
-import mysql.connector
+from jsfinance.db import connect
 from mysql.connector import errorcode
 from tkinter import *
 from tkinter import ttk
@@ -14,22 +14,6 @@ import xlwt
 #import csv
 from decouple import config
 
-from urllib.parse import urlparse
-
-def dburl(url):
-    u = urlparse(url)
-    return dict(
-        user=u.username,
-        password=(u.password or ''),
-        host=u.hostname,
-        port=str(u.port),
-        database=u.path[1:]
-    )
-
-
-def connect():
-    return mysql.connector.connect(**config('DATABASE_URL', cast=dburl))
-
 
 def load_image(filename):
     image = Image.open(filename)
@@ -38,8 +22,8 @@ def load_image(filename):
 
 
 class Sistema:
-
     def __init__(self, master):
+        self.master = master
         self.Date1 = StringVar()
         self.Date1.set(time.strftime("%d/%m/%Y"))
         
@@ -54,7 +38,7 @@ class Sistema:
         self.menuCadastro.add_command(label="LANCAMENTOS", command=self.cadastraContas)
         self.menuCadastro.add_command(label="FATURAS CARTOES", command=self.cad_Faturas)
         self.menuCadastro.add_command(label="TIPOS PAGAMENTOS", command=self.cad_Tipos_Pgto)
-        self.menuCadastro.add_command(label="Sair", command=root.destroy)
+        self.menuCadastro.add_command(label="Sair", command=master.destroy)
         self.menu.add_cascade(label='CADASTRAR', menu=self.menuCadastro)
 
         self.menuConsulta = Menu(self.menu)
@@ -119,7 +103,7 @@ class Sistema:
         self.btn_creditos.place(x=0, y=50)
 
         self.btn_sair = Button(self.frame1, pady=1, bg='light blue', padx=1, bd=2, width=120, height=120,
-                               command=root.destroy, image=self.imagem1)
+                               command=self.master.destroy, image=self.imagem1)
         self.btn_sair.place(x=305, y=0)
 
         self.texto_logo = Label(self.frame1, text='DESENVOLVIDO POR JS INFORMÁTICA ', pady=2, bg='RoyalBlue1', padx=2,
@@ -146,8 +130,7 @@ class Sistema:
         self.btn_busca_todos.place(x=0, y=300)
 
     def help_Desk(self):
-        url = "http://192.168.10.90/glpi/"
-        webbrowser.open(url)
+        webbrowser.open(config('HELPDESK_URL'))
         
     def ultimo_registro(self):
         cnx = connect()
@@ -287,7 +270,7 @@ class Sistema:
         self.tela1.geometry("950x550+250+500")
         self.tela1.title("Cadastro de Contas")
         self.tela1.configure(background='light blue')
-        self.tela1.transient(root)
+        self.tela1.transient(self.master)
         self.tela1.grab_set()
         if id_conta:
             self.id_contae.insert(0,id_conta)
@@ -456,7 +439,7 @@ class Sistema:
         
         self.consulta1.geometry('1580x760')
         self.consulta1.title('CONSULTA TODAS AS CONTAS')
-        self.consulta1.transient(root)
+        self.consulta1.transient(self.master)
         self.consulta1.focus_force()
         self.consulta1.grab_set()
 
@@ -653,7 +636,7 @@ class Sistema:
         
         self.consulta_mes.geometry('1480x680')
         self.consulta_mes.title('CONSULTA CONTAS DO MES')
-        self.consulta_mes.transient(root)
+        self.consulta_mes.transient(self.master)
         self.consulta_mes.focus_force()
         self.consulta_mes.grab_set()
 
@@ -731,7 +714,7 @@ class Sistema:
         
         self.consulta_mes_paga.geometry('1450x798+100+50')
         self.consulta_mes_paga.title('CONSULTA CONTAS DO MES PAGAS')
-        self.consulta_mes_paga.transient(root)
+        self.consulta_mes_paga.transient(self.master)
         self.consulta_mes_paga.focus_force()
         self.consulta_mes_paga.grab_set()
 
@@ -797,7 +780,7 @@ class Sistema:
         
         self.consulta_mes_aberto .geometry('1480x680')
         self.consulta_mes_aberto .title('CONSULTA CONTAS EM ABERTO MES ATUAL')
-        self.consulta_mes_aberto .transient(root)
+        self.consulta_mes_aberto .transient(self.master)
         self.consulta_mes_aberto .focus_force()
         self.consulta_mes_aberto .grab_set()
 
@@ -856,7 +839,7 @@ class Sistema:
 
         self.cad_cat.geometry('890x350+500+500')
         self.cad_cat.title('CADASTRO DE CATEGORIAS')
-        self.cad_cat.transient(root)
+        self.cad_cat.transient(self.master)
         self.cad_cat.focus_force()
         self.cad_cat.grab_set()
         self.cad_cat.configure(background = '#CCFFCC')
@@ -989,7 +972,7 @@ class Sistema:
         
         self.consulta2.geometry('860x400+50+50')
         self.consulta2.title('CONSULTA CATEGORIAS')
-        self.consulta2.transient(root)
+        self.consulta2.transient(self.master)
         self.consulta2.focus_force()
         self.consulta2.grab_set()        
             
@@ -1034,7 +1017,7 @@ class Sistema:
 
         self.listaCat_perso.geometry('840x270')
         self.listaCat_perso.title('LISTAR POR DESCRICAO')
-        self.listaCat_perso.transient(root)
+        self.listaCat_perso.transient(self.master)
         self.listaCat_perso.focus_force()
         self.listaCat_perso.grab_set()
 
@@ -1091,7 +1074,7 @@ class Sistema:
         
         self.consulta3.geometry('1380x200')
         self.consulta3.title('BUSCA PERSONALIZADA')
-        self.consulta3.transient(root)
+        self.consulta3.transient(self.master)
         self.consulta3.focus_force()
         self.consulta3.grab_set()
 
@@ -1138,7 +1121,7 @@ class Sistema:
 
         self.listaTotal.geometry('640x270')
         self.listaTotal.title('TOTAL FORMA PGTO MES ATUAL')
-        self.listaTotal.transient(root)
+        self.listaTotal.transient(self.master)
         self.listaTotal.configure(background='light blue')
         self.listaTotal.focus_force()
         self.listaTotal.grab_set()
@@ -1216,7 +1199,7 @@ class Sistema:
 
         self.cad_fatura.geometry('890x350+500+500')
         self.cad_fatura.title('FATURAS CARTOES')
-        self.cad_fatura.transient(root)
+        self.cad_fatura.transient(self.master)
         self.cad_fatura.focus_force()
         self.cad_fatura.grab_set()
         self.cad_fatura.configure(background = '#CCFFCC')
@@ -1360,7 +1343,7 @@ class Sistema:
         
         self.consulta5.geometry('1080x610')
         self.consulta5.title('CONSULTA CATEGORIAS')
-        self.consulta5.transient(root)
+        self.consulta5.transient(self.master)
         self.consulta5.focus_force()
         self.consulta5.grab_set()
         
@@ -1390,7 +1373,7 @@ class Sistema:
 
         self.cad_tipospgto.geometry('655x400')
         self.cad_tipospgto.title('CADASTRO TIPOS DE PAGAMENTOS')
-        self.cad_tipospgto.transient(root)
+        self.cad_tipospgto.transient(self.master)
         self.cad_tipospgto.focus_force()
         self.cad_tipospgto.grab_set() 
 
@@ -1458,7 +1441,7 @@ class Sistema:
         
         self.consulta6.geometry('550x400')
         self.consulta6.title('LISTA TODAS AS FORMAS DE PAGAMENTO CADASTRADAS')
-        self.consulta6.transient(root)
+        self.consulta6.transient(self.master)
         self.consulta6.focus_force()
         self.consulta6.grab_set()
         
@@ -1590,7 +1573,7 @@ class Sistema:
         
         self.lista_perso_Cat.geometry('1250x700')
         self.lista_perso_Cat.title('Listar Todas as contas por Categorias6')
-        self.lista_perso_Cat.transient(root)
+        self.lista_perso_Cat.transient(self.master)
         self.lista_perso_Cat.focus_force()
         self.lista_perso_Cat.grab_set()
 
@@ -1722,7 +1705,7 @@ class Sistema:
 
         self.lista_perso.geometry('1300x800')
         self.lista_perso.title('BUSCA PERSONALIZADA')
-        self.lista_perso.transient(root)
+        self.lista_perso.transient(self.master)
         self.lista_perso.focus_force()
         self.lista_perso.grab_set()
 
@@ -1799,7 +1782,7 @@ class Sistema:
         self.entradas.geometry("800x480+200+200")
         self.entradas.title("CADASTRO ENTRADAS CRÉDITOS")
 ##        self.entradas.configure(background='light blue')
-        self.entradas.transient(root)
+        self.entradas.transient(self.master)
         self.entradas.grab_set()    
 
     
@@ -1846,17 +1829,4 @@ class Sistema:
         self.valor_entradae.delete(0, END)
         self.data_pagtoe.delete(0, END)
         self.obs_ent_e.delete(0, END)
-        
-        
-        
-if __name__ == '__main__':
-    root = Tk()
-    Sistema(root)
-    root.geometry("750x640+540+110")
-    #root.resizable(0,0)
-    root.title("JS Financas")
-    root.configure(background='#004400')
-    #root.configure(background='pink')
-    root.configure(highlightbackground='#CC00CC')
-    root.configure(highlightcolor='black')
-    root.mainloop()
+
