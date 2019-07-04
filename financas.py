@@ -12,16 +12,23 @@ import sys
 import time;
 import xlwt
 #import csv
+from decouple import config
+
+from urllib.parse import urlparse
+
+def dburl(url):
+    u = urlparse(url)
+    return dict(
+        user=u.username,
+        password=(u.password or ''),
+        host=u.hostname,
+        port=str(u.port),
+        database=u.path[1:]
+    )
 
 
 def connect():
-    return mysql.connector.connect(
-        user='root',
-        password='',
-        host='127.0.0.1',
-        database='FINANCAS',
-        port='3306'
-    )
+    return mysql.connector.connect(**config('DATABASE_URL', cast=dburl))
 
 
 def load_image(filename):
