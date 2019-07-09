@@ -1,0 +1,17 @@
+version: '3.0'
+services:
+  mariadb:
+    container_name: mariadb-jsfinance
+    image: mariadb:latest
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: "true"
+      MYSQL_ROOT_HOST: '%'
+    volumes:
+      - db:/var/lib/mysql
+      - ./contrib:/contrib
+    ports:
+      - '3306:3306'
+    working_dir: /contrib
+
+volumes:
+  db:
