@@ -1,26 +1,23 @@
 # Utilização do Docker para subir base de dados
 
 ## Dependências
-* Docker
-* Docker Compose
+* [docker](https://download.docker.com/)
+* [docker-compose](https://pypi.org/project/docker-compose/)
 
-## Comandos
+## Provisionar ambiente
 
-* Subir imagem
-```docker
-docker-compose up
-```
-* Criar a base de dados
-```docker
-docker-compose exec mariadb mysql -e 'create database JSFINANCE;'
-```
+1. Copie o arquivo `contrib/.env` para a raiz do projeto ou crie um com as variáveis definidas no arquivo de exemplo.
 
-* Criar estrutura de tabelas
-```docker
-docker-compose exec mariadb mysql -e 'source /contrib/schema.sql;' JSFINANCE
+2. Execute:
+
+```bash
+docker-compose up -d
 ```
 
-* Popular banco com dados de exemplo
-```docker
-docker-compose exec mariadb mysql -e 'source /contrib/sample-data.sql;' JSFINANCE
+> para testar execute:
+
+```bash
+source .env
+
+docker-compose exec mysql mysql -u $MYSQL_USER -p$MYSQL_PASSWORD $MYSQL_DATABASE
 ```
