@@ -8,7 +8,7 @@ O _JS Finance_ tem tudo o que você precisa para manter seu dinheiro no bolso.
 Se maravilhe com esses recursos sensacionais de última geração:
 
 - Contas a pagar;
-- Contas a receber; 
+- Contas a receber;
 
 ## Como contribuir
 
@@ -22,6 +22,14 @@ Se maravilhe com esses recursos sensacionais de última geração:
 cd jsfinance
 python -m venv .venv
 source .venv/bin/activate
+```
+
+- Crie um virtualenv (WINDOWS).
+
+```
+cd jsfinance
+virtualenv .venv
+.venv/Scripts/activate
 ```
 
 - Instale as dependências.
