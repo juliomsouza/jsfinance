@@ -21,3 +21,4 @@ source .env
 
 docker-compose exec mysql mysql -u $MYSQL_USER -p$MYSQL_PASSWORD $MYSQL_DATABASE
 ```
+Para que os dados do banco de desenvolvimento não sejam perdidos descomente a **linha 14** do arquivo docker-compose.yml e crie um diretório **data** na raiz do projeto.
