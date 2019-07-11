@@ -1,8 +1,9 @@
 from tkinter import  Tk
 from jsfinance.core import Sistema
+from jsfinance.ui_main import Sistema as MainWindow
 
 root = Tk()
-Sistema(root)
+MainWindow(root)
 root.geometry("750x640+540+110")
 #root.resizable(0,0)
 root.title("JS Financas")
