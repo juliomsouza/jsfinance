@@ -4,16 +4,12 @@ from tkinter import *
 from tkinter.scrolledtext import ScrolledText
 
 from PIL import Image, ImageTk
+from pathlib import Path
 
+ASSET_DIR = Path(__file__).parent / Path('assets')
 
 def fake_command(*args):
     print(args)
-    
-
-def load_image(filename):
-    image = Image.open(filename)
-    photo = ImageTk.PhotoImage(image)
-    return photo
 
 
 class JSButton(Button):
@@ -65,14 +61,12 @@ class StackedFrame(Frame):
         return widget
 
 
-class Sistema:
-    def __init__(self, master):
-        self.master = master
-        self.Date1 = StringVar()
-        self.Date1.set(time.strftime("%d/%m/%Y"))
+class Sistema(Frame):
+    def __init__(self, *args, **kwargs):
+        Frame.__init__(self, *args, **kwargs)
 
-        self.create_menu(master)
-        self.create_widgets(master)
+        self.create_menu(self.master)
+        self.create_widgets()
 
     def create_menu(self, master):
         menus = (
@@ -115,19 +109,13 @@ class Sistema:
 
         master.config(menu=main_menu)
 
-    def create_widgets(self, master):
-        self.frame = Frame(master)
-        self.frame.pack()
+    def create_widgets(self):
+        self.pack()
 
+        self.imagem1 = ImageTk.PhotoImage(file=str(ASSET_DIR / 'exit.gif'))
+        self.imagem3 = ImageTk.PhotoImage(file=str(ASSET_DIR / 'logo.gif'))
 
-        #self.lblDate = Label(master, textvariable=self.Date1, font=('arial', 18, 'bold'), padx=1, pady=1,
-        #                     bd=10, bg="#004400", fg="Cornsilk", justify=LEFT, width=20)
-        #self.lblDate.pack()
-
-        self.imagem1 = load_image('Button-exit-icon.png')
-        self.imagem3 = load_image('logo.png')
-
-        self.frame1 = StackedFrame(master, bd=8, relief="raise")
+        self.frame1 = StackedFrame(self, bd=8, relief="raise")
         self.frame1.pack(side=LEFT, expand=True, fill=BOTH)
 
         self.btn_contas = self.frame1.add_widget(JSButton, self.frame1, text='LANÇAMENTOS-DÉBITOS', command=fake_command)
@@ -142,7 +130,7 @@ class Sistema:
                               image=self.imagem3)
 
 
-        self.frame2 = StackedFrame(master, bd=8, relief="raise")
+        self.frame2 = StackedFrame(self, bd=8, relief="raise")
         self.frame2.pack(side=RIGHT, expand=True, fill=BOTH)
 
         self.busca_persomes = self.frame2.add_widget(JSButton, self.frame2, text='LISTAR CONTAS MES ATUAL ',
