@@ -1,6 +1,6 @@
 import time
 from tkinter import  Tk
-from jsfinance.core import Sistema
+#from jsfinance.core import Sistema
 from jsfinance.ui_main import Sistema as MainWindow
 
 root = Tk()
