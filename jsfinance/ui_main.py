@@ -1,9 +1,5 @@
-# encoding: utf-8
-import time;
-from tkinter import *
-from tkinter.scrolledtext import ScrolledText
-
-from PIL import Image, ImageTk
+import tkinter as tk
+from jsfinance.widgets import JSButton, StackedFrame
 from pathlib import Path
 
 ASSET_DIR = Path(__file__).parent / Path('assets')
@@ -12,58 +8,10 @@ def fake_command(*args):
     print(args)
 
 
-class JSButton(Button):
-    def __init__(self, master=None, cnf={}, **kw):
 
-        self.apply_default_styles(kw)
-        super().__init__(master=master, cnf=cnf, **kw)
-
-    def pack(self, **kwargs):
-        kwargs['fill'] = 'x'
-        return super().pack(**kwargs)
-
-    def apply_default_styles(self, kw):
-        styles = dict(bg='RoyalBlue1', bd=2,
-                      font=('Arial', 12, 'bold'), fg='black')
-
-        for key, value in styles.items():
-            if key not in kw:
-                kw[key] = value
-
-# class DebugWindow:
-#     def __init__(self):
-#         self.t = ScrolledText(self.frame2)
-#         self.t.pack(side=BOTTOM, fill=BOTH, expand=True)
-#
-#         def gambi():
-#             exec(self.t.get(1.0, END))
-#
-#         self.b = JSButton(self.frame2, text='Run', command=gambi)
-#         self.b.pack(side=BOTTOM)
-
-class StackedFrame(Frame):
+class Sistema(tk.Frame):
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.top_margin = None
-
-    def _add_expander(self):
-        return Frame(self).pack(fill=BOTH, expand=True)
-
-    def add_widget(self, cls, *args, **kwargs):
-        if not self.top_margin:
-            self.top_margin = self._add_expander()
-
-        widget = cls(*args, **kwargs)
-        widget.pack()
-
-        self._add_expander()
-
-        return widget
-
-
-class Sistema(Frame):
-    def __init__(self, *args, **kwargs):
-        Frame.__init__(self, *args, **kwargs)
+        tk.Frame.__init__(self, *args, **kwargs)
 
         self.create_menu(self.master)
         self.create_widgets()
@@ -99,10 +47,10 @@ class Sistema(Frame):
             ),
         )
 
-        main_menu = Menu(master)
+        main_menu = tk.Menu(master)
 
         for name, children in zip(menus[:-1:2], menus[1::2]):
-            submenu = Menu(main_menu)
+            submenu = tk.Menu(main_menu)
             for label, command in children:
                 submenu.add_command(label=label, command=command)
             main_menu.add_cascade(label=name, menu=submenu)
@@ -110,40 +58,40 @@ class Sistema(Frame):
         master.config(menu=main_menu)
 
     def create_widgets(self):
-        self.pack()
+        self.pack(fill=tk.BOTH, expand=True)
 
-        self.imagem1 = ImageTk.PhotoImage(file=str(ASSET_DIR / 'exit.gif'))
-        self.imagem3 = ImageTk.PhotoImage(file=str(ASSET_DIR / 'logo.gif'))
+        self.img_exit = tk.PhotoImage(file=str(ASSET_DIR / 'exit.gif'))
+        self.img_logo = tk.PhotoImage(file=str(ASSET_DIR / 'logo.gif'))
 
-        self.frame1 = StackedFrame(self, bd=8, relief="raise")
-        self.frame1.pack(side=LEFT, expand=True, fill=BOTH)
+        self.frm_left = StackedFrame(self, bd=8, relief="raise")
+        self.frm_left.pack(side=tk.LEFT, expand=True, fill=tk.BOTH)
 
-        self.btn_contas = self.frame1.add_widget(JSButton, self.frame1, text='LANÇAMENTOS-DÉBITOS', command=fake_command)
-        self.btn_creditos = self.frame1.add_widget(JSButton, self.frame1, text='LANÇAMENTOS-CRÉDITOS', command=fake_command)
-        self.btn_sair = self.frame1.add_widget(Button, self.frame1, pady=1, bg='light blue', padx=1, bd=2, width=120, height=120,
-                               command=fake_command, image=self.imagem1)
+        self.btn_contas = self.frm_left.add_widget(JSButton, self.frm_left, text='LANÇAMENTOS-DÉBITOS', command=fake_command)
+        self.btn_creditos = self.frm_left.add_widget(JSButton, self.frm_left, text='LANÇAMENTOS-CRÉDITOS', command=fake_command)
+        self.btn_sair = self.frm_left.add_widget(tk.Button, self.frm_left, pady=1, bg='light blue', padx=1, bd=2, width=120, height=120,
+                                                 command=fake_command, image=self.img_exit)
 
-        self.texto_logo = self.frame1.add_widget(Label, self.frame1, text='DESENVOLVIDO POR JS INFORMÁTICA ', pady=2, bg='RoyalBlue1', padx=2,
-                                bd=2, width=47, height=2, font=('Arial', 12, 'bold'), fg='black')
+        self.texto_logo = self.frm_left.add_widget(tk.Label, self.frm_left, text='DESENVOLVIDO POR JS INFORMÁTICA ', pady=2, bg='RoyalBlue1', padx=2,
+                                                   bd=2, width=47, height=2, font=('Arial', 12, 'bold'), fg='black')
 
-        self.btn_logo = self.frame1.add_widget(Label, self.frame1, text='', pady=1, bg='light blue', padx=1, bd=2, width=427, height=250,
-                              image=self.imagem3)
+        self.btn_logo = self.frm_left.add_widget(tk.Label, self.frm_left, text='', pady=1, bg='light blue', padx=1, bd=2, width=427, height=250,
+                                                 image=self.img_logo)
 
 
-        self.frame2 = StackedFrame(self, bd=8, relief="raise")
-        self.frame2.pack(side=RIGHT, expand=True, fill=BOTH)
+        self.frm_right = StackedFrame(self, bd=8, relief="raise")
+        self.frm_right.pack(side=tk.RIGHT, expand=True, fill=tk.BOTH)
 
-        self.busca_persomes = self.frame2.add_widget(JSButton, self.frame2, text='LISTAR CONTAS MES ATUAL ',
-                                                     command=fake_command)
-        self.busca_persomes_paga = self.frame2.add_widget(JSButton, self.frame2, text='CONTAS MES ATUAL PAGAS ',
+        self.busca_persomes = self.frm_right.add_widget(JSButton, self.frm_right, text='LISTAR CONTAS MES ATUAL ',
+                                                        command=fake_command)
+        self.busca_persomes_paga = self.frm_right.add_widget(JSButton, self.frm_right, text='CONTAS MES ATUAL PAGAS ',
+                                                             command=fake_command)
+        self.busca_persomes_aberto = self.frm_right.add_widget(JSButton, self.frm_right, text='CONTAS MES ATUAL ABERTO ',
+                                                               command=fake_command)
+        self.btn_busca_Totais = self.frm_right.add_widget(JSButton, self.frm_right, text='TOTAIS POR TIPO DE PGTO',
                                                           command=fake_command)
-        self.busca_persomes_aberto = self.frame2.add_widget(JSButton, self.frame2, text='CONTAS MES ATUAL ABERTO ',
-                                                            command=fake_command)
-        self.btn_busca_Totais = self.frame2.add_widget(JSButton, self.frame2, text='TOTAIS POR TIPO DE PGTO',
-                                                       command=fake_command)
-        self.btn_busca_conta = self.frame2.add_widget(JSButton, self.frame2, text='LISTAR POR CATEGORIAS',
-                                                      command=fake_command)
-        self.btn_busca_todos = self.frame2.add_widget(JSButton, self.frame2, text='CONTAS PERSONALIZ.',
-                                                      command=fake_command)
+        self.btn_busca_conta = self.frm_right.add_widget(JSButton, self.frm_right, text='LISTAR POR CATEGORIAS',
+                                                         command=fake_command)
+        self.btn_busca_todos = self.frm_right.add_widget(JSButton, self.frm_right, text='CONTAS PERSONALIZ.',
+                                                         command=fake_command)
 
 
