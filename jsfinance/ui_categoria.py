@@ -1,57 +1,94 @@
 import tkinter as tk
 from tkinter import ttk
 from tkinter import messagebox
-from jsfinance.db import connect
+from jsfinance.db import connect, category_get, category_insert, category_update, DoesNotExist
 from mysql.connector import errorcode, Error as MysqlError
+
+
+"""
+TODO:
+1. Ajustar os nomes dos controles;
+2. Eliminar parametros de aparência da instanciação.
+3. Extrair a lógica do banco de dentro da janela.
+4. Unificar a lógica de insert/update.
+5. Criar nosso próprio Entry para simplificar manipulação do conteúdo.
+"""
+
+class JSEntry(tk.Entry):
+    def __init__(self, master=None, cnf={}, **kw):
+
+        self.apply_default_styles(kw)
+        super().__init__(master=master, cnf=cnf, **kw)
+
+    def apply_default_styles(self, kw):
+        styles = dict(bg='lemonchiffon', bd=4)
+
+        for key, value in styles.items():
+            if key not in kw:
+                kw[key] = value
+
+    @property
+    def content(self):
+        return self.get()
+
+    @content.setter
+    def content(self, value):
+        self.delete(0, tk.END)
+        self.insert(0, value)
 
 
 class CategoryDialog(tk.Toplevel):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
+        self.id = tk.IntVar()
+        self.id.set("")
+        self.descricao = tk.StringVar()
+        self.obs = tk.StringVar()
+
         self.create_widgets()
-    
+
     def create_widgets(self):
-        self.idcat = tk.Label(self, text="ID ", fg='black', bg='#CCFFCC')
-        self.idcat.grid(row=0, column=0)
-        self.editidcat = tk.Entry(self, width=10, bg='lemonchiffon', bd=4)
-        self.editidcat.grid(row=0, column=1, sticky=tk.W)
-        self.catB = tk.Button(self, text="BUSCAR CATEG.", width=17, font=('Arial', 14, 'bold'), command=self.pesquisar_Cat)
-        self.catB.grid(row=0, column=2)
-        self.catB.bind("<Return>", self.pesquisar_Cat)
-        self.descricao = tk.Label(self, text="DESCRICAO", fg='black', bg='#CCFFCC')
-        self.descricao.grid(row=1, column=0)
-        self.editdescricao = tk.Entry(self, width=20, bg='lemonchiffon', bd=4)
-        self.editdescricao.grid(row=1, column=1, sticky=tk.W)
-        self.editdescricao.focus()
-        self.obs_cat = tk.Label(self, text='OBSERVAÇÕES', font=('Arial', 16, 'bold'), bg='lightskyblue')
-        self.obs_cat.grid(row=2, column=1)
-        self.obs_e = tk.Entry(self, width=30, bg='lemonchiffon', bd=4)
-        self.obs_e.grid(row=3, column=1)
+        self.lb_idcat = tk.Label(self, text="ID ", fg='black', bg='#CCFFCC')
+        self.lb_idcat.grid(row=0, column=0)
+        self.tb_idcat = JSEntry(self, width=10, textvariable=self.id)
+        self.tb_idcat.grid(row=0, column=1, sticky=tk.W)
+        self.bt_buscar = tk.Button(self, text="BUSCAR CATEG.", width=17, font=('Arial', 14, 'bold'), command=self.select)
+        self.bt_buscar.grid(row=0, column=2)
+        self.bt_buscar.bind("<Return>", self.select)
+        self.lb_desc = tk.Label(self, text="DESCRICAO", fg='black', bg='#CCFFCC')
+        self.lb_desc.grid(row=1, column=0)
+        self.tb_desc = JSEntry(self, width=20, textvariable=self.descricao)
+        self.tb_desc.grid(row=1, column=1, sticky=tk.W)
+        self.tb_desc.focus()
+        self.lb_obs = tk.Label(self, text='OBSERVAÇÕES', font=('Arial', 16, 'bold'), bg='lightskyblue')
+        self.lb_obs.grid(row=2, column=1)
+        self.tb_obs = JSEntry(self, width=30, textvariable=self.obs)
+        self.tb_obs.grid(row=3, column=1)
     
         # ===========================================================================================================================================
         #                                                   BOTÕES                                                                                  =
         # ===========================================================================================================================================
     
-        self.grav_cat = tk.Button(self, text='GRAVAR ', pady=2, bg='black', padx=1, bd=2, width=25, height=2,
-                               font=('Arial', 12, 'bold'), fg='blue', command=self.gravaCat)  # , state = 'disable')
-        self.grav_cat.grid(row=7, column=0)
+        self.bt_insert = tk.Button(self, text='GRAVAR ', pady=2, bg='black', padx=1, bd=2, width=25, height=2,
+                               font=('Arial', 12, 'bold'), fg='blue', command=self.insert)  # , state = 'disable')
+        self.bt_insert.grid(row=7, column=0)
     
-        self.limpa_cat = tk.Button(self, text='LIMPAR ', pady=1, bg='black', padx=2, bd=1, width=25, height=2,
-                                font=('Arial', 12, 'bold'), fg='green', command=self.limpa_gravaCat)
-        self.limpa_cat.grid(row=7, column=1)
+        self.bt_clear = tk.Button(self, text='LIMPAR ', pady=1, bg='black', padx=2, bd=1, width=25, height=2,
+                                font=('Arial', 12, 'bold'), fg='green', command=self.clear)
+        self.bt_clear.grid(row=7, column=1)
     
-        self.boficina = tk.Button(self, text='TODAS CATEGORIAS', pady=1, bg='black', padx=2, bd=1, width=25, height=2,
+        self.bt_list = tk.Button(self, text='TODAS CATEGORIAS', pady=1, bg='black', padx=2, bd=1, width=25, height=2,
                                font=('Arial', 12, 'bold'), fg='yellow', command=lambda: CategoryList(self))
-        self.boficina.grid(row=8, column=0)
+        self.bt_list.grid(row=8, column=0)
     
-        self.sair_categ = tk.Button(self, text='SAIR ', pady=1, bg='black', padx=2, bd=1, width=25, height=2,
+        self.bt_exit = tk.Button(self, text='SAIR ', pady=1, bg='black', padx=2, bd=1, width=25, height=2,
                                  font=('Arial', 12, 'bold'), fg='red', command=self.destroy)
-        self.sair_categ.grid(row=8, column=1)
+        self.bt_exit.grid(row=8, column=1)
     
-        self.btn_editar = tk.Button(self, text='ALTERAR', width=20, height=2, bg='black', fg='yellow',
-                                 command=self.atualiza_Cat)
-        self.btn_editar.grid(row=7, column=2)
+        self.bt_update = tk.Button(self, text='ALTERAR', width=20, height=2, bg='black', fg='yellow',
+                                 command=self.update)
+        self.bt_update.grid(row=7, column=2)
     
         self.geometry('890x350+500+500')
         self.title('CADASTRO DE CATEGORIAS')
@@ -60,82 +97,49 @@ class CategoryDialog(tk.Toplevel):
         self.grab_set()
         self.configure(background='#CCFFCC')
 
-    def gravaCat(self):
-        cnx = connect()
-        cursor = cnx.cursor()
+    def insert(self):
+        descricao = self.descricao.get().upper()
+        obs = self.obs.get().upper()
 
-        descricao = self.editdescricao.get().upper()
-        if self.editdescricao.get() == '':
+        if not descricao:
             messagebox.showwarning("Erro", "DIGITE A DESCRICAO", parent=self)
-        else:
-            obs = self.obs_e.get().upper()
-
-            # data = time.strftime('%d/%m/%y %H:%M:%S')
-
-        cursor.execute("INSERT INTO CATEGORIAS (DESC_CAT, OBS_CAT)\
-        VALUES ('" + descricao + "','" + obs + "')")
+            return
 
         try:
-            cnx.commit()
-            # print("Dados gravados com sucesso")
-            messagebox.showinfo("SUCESSO", "Dados gravados com sucesso!:)", parent=self)
-            self.limpa_gravaCat()
+            category_insert(descricao, obs)
+        except MysqlError as e:
+            messagebox.showerror("Erro ao gravar os dados", e)
 
-        except MysqlError as err:
-            # print("Não conseguiu gravar no banco de dados.:",err)
-            messagebox.showrror("Erro ao gravar os dados", err, parent=self)
+        messagebox.showinfo("SUCESSO", "Dados gravados com sucesso!:)")
 
-        cnx.close()
 
-    def limpa_gravaCat(self):  # Mysql
-        # self.editlist_ofi.delete(0,END)
-        self.editdescricao.delete(0, tk.END)
-        self.obs_e.delete(0, tk.END)
+    def select(self, event=None):
+        idcat = self.id.get()
 
-        # UPDATE Categorias
+        try:
+            _, self.tb_desc.content, self.tb_obs.content = category_get(idcat)
+        except DoesNotExist as e:
+            messagebox.showerror(e.message)
 
-    def pesquisar_Cat(self, event=None):
-        #self.desabilita_Cat()
-        cnx = connect()
-        cursor = cnx.cursor()
+    def update(self):
+        idcat = self.id.get()
+        descricao = self.descricao.get().upper()
 
-        cursor.execute("SELECT * FROM CATEGORIAS WHERE ID_CAT = '" + self.editidcat.get() + "' ")
-
-        dadosbanco = cursor.fetchone()
-        self.limpa_gravaCat()
-        if dadosbanco:
-            # self.Limpa_gravar()
-            # print(cursor.execute())
-            self.editdescricao.insert(0, dadosbanco[1])
-            self.obs_e.insert(0, dadosbanco[2])
-
-        cnx.close()
-
-        # UPDATE CATEGORIAS
-
-    def atualiza_Cat(self):
-        cnx = connect()
-        cursor = cnx.cursor()
-        idcat = self.editidcat.get()
-        descricao = self.editdescricao.get().upper()
-        if self.editdescricao.get() == '':
+        if not descricao:
             messagebox.showwarning("Erro", "DIGITE A DESCRICAO")
-        else:
+            return
 
-            sql = "UPDATE CATEGORIAS SET DESC_CAT = '" + descricao + "' WHERE ID_CAT = " + idcat
         try:
-            cursor.execute(sql)
-            cnx.commit()
-            # print("Dados gravados com sucesso")
-            messagebox.showinfo("Dados Gravados", "Gravação OK! ")
-            self.limpa_gravaCat()
-            #self.habilita_Cat()
+            category_update(idcat, descricao)
+        except MysqlError as e:
+            messagebox.showerror("Não conseguiu gravar", e)
 
-        except MysqlError as err:
-            # print("Não conseguiu gravar",err)
-            messagebox.showerror("Não conseguiu gravar", err)
+        messagebox.showinfo("Dados Gravados", "Gravação OK! ")
 
-        cnx.close()
+    def clear(self):
+        self.id.set("")
+        self.descricao.set("")
+        self.obs.set("")
 
 
 class CategoryList(tk.Toplevel):
