@@ -1,5 +1,6 @@
 import tkinter as tk
 from jsfinance.widgets import JSButton, StackedFrame
+from jsfinance.ui_categoria import CategoryDialog
 from pathlib import Path
 
 ASSET_DIR = Path(__file__).parent / Path('assets')
@@ -20,7 +21,7 @@ class Sistema(tk.Frame):
         menus = (
             'CADASTRAR',
             (
-                ("Categorias", fake_command),
+                ("Categorias", lambda: CategoryDialog(master=self)),
                 ("Lançamentos", fake_command),
                 ("Faturas Cartôes", fake_command),
                 ("Tipos Pagamentos", fake_command),
