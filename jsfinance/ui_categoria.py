@@ -7,11 +7,8 @@ from mysql.connector import errorcode, Error as MysqlError
 
 """
 TODO:
-1. Ajustar os nomes dos controles;
 2. Eliminar parametros de aparência da instanciação.
-3. Extrair a lógica do banco de dentro da janela.
 4. Unificar a lógica de insert/update.
-5. Criar nosso próprio Entry para simplificar manipulação do conteúdo.
 """
 
 class JSEntry(tk.Entry):
