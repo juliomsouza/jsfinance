@@ -15,5 +15,18 @@ def dburl(url):
 
 
 def connect():
-    return mysql_connect(**config('DATABASE_URL', cast=dburl))
+    return ConnectionAdapter(mysql_connect(**config('DATABASE_URL', cast=dburl)))
 
+
+class ConnectionAdapter:
+    def __init__(self, cnx):
+        self._cnx = cnx
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self._cnx.close()
+
+    def __getattr__(self, name):
+        return getattr(self._cnx, name)
