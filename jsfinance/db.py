@@ -1,4 +1,5 @@
 from mysql.connector import connect as mysql_connect
+from mysql.connector import Error as MysqlError
 from decouple import config
 from urllib.parse import urlparse
 
@@ -26,6 +27,11 @@ class ConnectionAdapter:
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
+        if exc_type is MysqlError:
+            self._cnx.rollback()
+        else:
+            self._cnx.commit()
+
         self._cnx.close()
 
     def __getattr__(self, name):
@@ -56,7 +62,6 @@ def category_update(idcat, descricao):
         sql = f"UPDATE CATEGORIAS SET DESC_CAT = '{descricao}' WHERE ID_CAT = {idcat}"
 
         cursor.execute(sql)
-        cnx.commit()
 
 
 def category_insert(descricao, obs):
@@ -66,4 +71,3 @@ def category_insert(descricao, obs):
         cursor.execute(f"INSERT INTO CATEGORIAS (DESC_CAT, OBS_CAT) "
                        f"VALUES ('{descricao}', '{obs}')")
 
-        cnx.commit()
