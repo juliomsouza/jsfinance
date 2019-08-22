@@ -1,17 +1,12 @@
 version: '3.0'
 services:
-  mariadb:
-    container_name: mariadb-jsfinance
-    image: mariadb:latest
-    environment:
-      MYSQL_ALLOW_EMPTY_PASSWORD: "true"
-      MYSQL_ROOT_HOST: '%'
+  mysql:
+    container_name: mysql
+    image: mysql:8.0.16
+    env_file:
+      - contrib/docker.env
     volumes:
-      - db:/var/lib/mysql
-      - ./contrib:/contrib
+      - ./contrib/:/docker-entrypoint-initdb.d/
+#      - ./data:/var/lib/mysql
     ports:
-      - '3306:3306'
-    working_dir: /contrib
-
-volumes:
-  db:
+      - 3306:3306
