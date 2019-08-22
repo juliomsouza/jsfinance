@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import ttk
 from tkinter import messagebox
-from jsfinance.db import connect, category_get, category_insert, category_update, DoesNotExist
+from jsfinance.db import connect, category_get, category_save, DoesNotExist
 from mysql.connector import errorcode, Error as MysqlError
 
 
@@ -24,12 +24,22 @@ class JSEntry(ttk.Entry):
         self.insert(0, value)
 
 
+class IdVar(tk.IntVar):
+    def get(self):
+        try:
+            value = super().get()
+            if isinstance(value, int) and value == 0:
+                value = None
+        except tk.TclError:
+            value = None
+
+        return value
+
 class CategoryDialog(tk.Toplevel):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        self.id = tk.IntVar()
-        self.id.set("")
+        self.id = IdVar(value="")
         self.descricao = tk.StringVar()
         self.obs = tk.StringVar()
 
@@ -57,7 +67,7 @@ class CategoryDialog(tk.Toplevel):
         #                                                   BOTÕES                                                                                  =
         # ===========================================================================================================================================
     
-        self.bt_insert = ttk.Button(self, text='GRAVAR ', command=self.insert)
+        self.bt_insert = ttk.Button(self, text='GRAVAR ', command=self.save)
         self.bt_insert.grid(row=7, column=0)
     
         self.bt_clear = ttk.Button(self, text='LIMPAR ', command=self.clear)
@@ -68,16 +78,14 @@ class CategoryDialog(tk.Toplevel):
     
         self.bt_exit = ttk.Button(self, text='SAIR ', command=self.destroy)
         self.bt_exit.grid(row=8, column=1)
-    
-        self.bt_update = ttk.Button(self, text='ALTERAR', command=self.update)
-        self.bt_update.grid(row=7, column=2)
 
         self.title('CADASTRO DE CATEGORIAS')
         self.transient(self.master)
         self.focus_force()
         self.grab_set()
 
-    def insert(self):
+    def save(self):
+        idcat = self.id.get()
         descricao = self.descricao.get().upper()
         obs = self.obs.get().upper()
 
@@ -86,12 +94,11 @@ class CategoryDialog(tk.Toplevel):
             return
 
         try:
-            category_insert(descricao, obs)
+            category_save(idcat, descricao, obs)
         except MysqlError as e:
             messagebox.showerror("Erro ao gravar os dados", e)
 
         messagebox.showinfo("SUCESSO", "Dados gravados com sucesso!:)")
-
 
     def select(self, event=None):
         idcat = self.id.get()
@@ -100,21 +107,6 @@ class CategoryDialog(tk.Toplevel):
             _, self.tb_desc.content, self.tb_obs.content = category_get(idcat)
         except DoesNotExist as e:
             messagebox.showerror(e.message)
-
-    def update(self):
-        idcat = self.id.get()
-        descricao = self.descricao.get().upper()
-
-        if not descricao:
-            messagebox.showwarning("Erro", "DIGITE A DESCRICAO")
-            return
-
-        try:
-            category_update(idcat, descricao)
-        except MysqlError as e:
-            messagebox.showerror("Não conseguiu gravar", e)
-
-        messagebox.showinfo("Dados Gravados", "Gravação OK! ")
 
     def clear(self):
         self.id.set("")
