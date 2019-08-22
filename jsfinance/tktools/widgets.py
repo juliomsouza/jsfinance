@@ -3,7 +3,7 @@ from tkinter import ttk
 from tkinter.scrolledtext import ScrolledText
 
 
-class JSButton(ttk.Button):
+class FilledButton(ttk.Button):
     def __init__(self, master=None, **kw):
 
         #self.apply_default_styles(kw)
@@ -21,7 +21,7 @@ class JSButton(ttk.Button):
 #         def gambi():
 #             exec(self.t.get(1.0, END))
 #
-#         self.b = JSButton(self.frame2, text='Run', command=gambi)
+#         self.b = FilledButton(self.frame2, text='Run', command=gambi)
 #         self.b.pack(side=BOTTOM)
 
 class StackedFrame(ttk.Frame):

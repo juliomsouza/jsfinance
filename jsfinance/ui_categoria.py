@@ -4,36 +4,12 @@ from tkinter import messagebox
 from jsfinance.db import connect, category_get, category_save, DoesNotExist
 from mysql.connector import errorcode, Error as MysqlError
 
+from jsfinance.tktools import IdVar, SmartEntry
 
 """
 TODO:
 4. Unificar a lógica de insert/update.
 """
-
-class JSEntry(ttk.Entry):
-    def __init__(self, master=None, **kw):
-        super().__init__(master=master, **kw)
-
-    @property
-    def content(self):
-        return self.get()
-
-    @content.setter
-    def content(self, value):
-        self.delete(0, tk.END)
-        self.insert(0, value)
-
-
-class IdVar(tk.IntVar):
-    def get(self):
-        try:
-            value = super().get()
-            if isinstance(value, int) and value == 0:
-                value = None
-        except tk.TclError:
-            value = None
-
-        return value
 
 class CategoryDialog(tk.Toplevel):
     def __init__(self, *args, **kwargs):
@@ -48,19 +24,19 @@ class CategoryDialog(tk.Toplevel):
     def create_widgets(self):
         self.lb_idcat = ttk.Label(self, text="ID ")
         self.lb_idcat.grid(row=0, column=0)
-        self.tb_idcat = JSEntry(self, width=10, textvariable=self.id)
+        self.tb_idcat = SmartEntry(self, width=10, textvariable=self.id)
         self.tb_idcat.grid(row=0, column=1, sticky=tk.W)
         self.bt_buscar = ttk.Button(self, text="BUSCAR CATEG.", command=self.select)
         self.bt_buscar.grid(row=0, column=2)
         self.bt_buscar.bind("<Return>", self.select)
         self.lb_desc = ttk.Label(self, text="DESCRICAO")
         self.lb_desc.grid(row=1, column=0)
-        self.tb_desc = JSEntry(self, width=20, textvariable=self.descricao)
+        self.tb_desc = SmartEntry(self, width=20, textvariable=self.descricao)
         self.tb_desc.grid(row=1, column=1, sticky=tk.W)
         self.tb_desc.focus()
         self.lb_obs = ttk.Label(self, text='OBSERVAÇÕES')
         self.lb_obs.grid(row=2, column=1)
-        self.tb_obs = JSEntry(self, width=30, textvariable=self.obs)
+        self.tb_obs = SmartEntry(self, width=30, textvariable=self.obs)
         self.tb_obs.grid(row=3, column=1)
     
         # ===========================================================================================================================================
