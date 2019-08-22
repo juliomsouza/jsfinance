@@ -64,22 +64,16 @@ class Sistema(tk.Frame):
         self.img_exit = tk.PhotoImage(file=str(ASSET_DIR / 'exit.gif'))
         self.img_logo = tk.PhotoImage(file=str(ASSET_DIR / 'logo.gif'))
 
-        self.frm_left = StackedFrame(self, bd=8, relief="raise")
+        self.frm_left = StackedFrame(self)
         self.frm_left.pack(side=tk.LEFT, expand=True, fill=tk.BOTH)
 
         self.btn_contas = self.frm_left.add_widget(JSButton, self.frm_left, text='LANÇAMENTOS-DÉBITOS', command=fake_command)
         self.btn_creditos = self.frm_left.add_widget(JSButton, self.frm_left, text='LANÇAMENTOS-CRÉDITOS', command=fake_command)
-        self.btn_sair = self.frm_left.add_widget(tk.Button, self.frm_left, pady=1, bg='light blue', padx=1, bd=2, width=120, height=120,
-                                                 command=fake_command, image=self.img_exit)
+        self.btn_sair = self.frm_left.add_widget(tk.Button, self.frm_left, command=fake_command, image=self.img_exit)
+        self.texto_logo = self.frm_left.add_widget(tk.Label, self.frm_left, text='DESENVOLVIDO POR JS INFORMÁTICA ')
+        self.btn_logo = self.frm_left.add_widget(tk.Label, self.frm_left, image=self.img_logo)
 
-        self.texto_logo = self.frm_left.add_widget(tk.Label, self.frm_left, text='DESENVOLVIDO POR JS INFORMÁTICA ', pady=2, bg='RoyalBlue1', padx=2,
-                                                   bd=2, width=47, height=2, font=('Arial', 12, 'bold'), fg='black')
-
-        self.btn_logo = self.frm_left.add_widget(tk.Label, self.frm_left, text='', pady=1, bg='light blue', padx=1, bd=2, width=427, height=250,
-                                                 image=self.img_logo)
-
-
-        self.frm_right = StackedFrame(self, bd=8, relief="raise")
+        self.frm_right = StackedFrame(self)
         self.frm_right.pack(side=tk.RIGHT, expand=True, fill=tk.BOTH)
 
         self.busca_persomes = self.frm_right.add_widget(JSButton, self.frm_right, text='LISTAR CONTAS MES ATUAL ',

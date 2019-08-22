@@ -1,24 +1,17 @@
 import tkinter as tk
+from tkinter import ttk
 from tkinter.scrolledtext import ScrolledText
 
 
-class JSButton(tk.Button):
-    def __init__(self, master=None, cnf={}, **kw):
+class JSButton(ttk.Button):
+    def __init__(self, master=None, **kw):
 
-        self.apply_default_styles(kw)
-        super().__init__(master=master, cnf=cnf, **kw)
+        #self.apply_default_styles(kw)
+        super().__init__(master=master, **kw)
 
     def pack(self, **kwargs):
         kwargs['fill'] = 'x'
         return super().pack(**kwargs)
-
-    def apply_default_styles(self, kw):
-        styles = dict(bg='RoyalBlue1', bd=2,
-                      font=('Arial', 12, 'bold'), fg='black')
-
-        for key, value in styles.items():
-            if key not in kw:
-                kw[key] = value
 
 # class DebugWindow:
 #     def __init__(self):
@@ -31,13 +24,13 @@ class JSButton(tk.Button):
 #         self.b = JSButton(self.frame2, text='Run', command=gambi)
 #         self.b.pack(side=BOTTOM)
 
-class StackedFrame(tk.Frame):
+class StackedFrame(ttk.Frame):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.top_margin = None
 
     def _add_expander(self):
-        return tk.Frame(self).pack(fill=tk.BOTH, expand=True)
+        return ttk.Frame(self).pack(fill=tk.BOTH, expand=True)
 
     def add_widget(self, cls, *args, **kwargs):
         if not self.top_margin:
