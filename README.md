@@ -54,7 +54,7 @@ mysql -e 'source contrib/schema.sql;' JSFINANCE
 mysql -e 'source contrib/sample-data.sql;' JSFINANCE
 ```
 
-ou se preferir utilize o [Docker](docker-banco.md) para subir a base de dados.
+ou se preferir utilize o [Docker](README-docker.md) para subir a base de dados.
 
 - Crie um arquivo .env com a url de conexão do banco.
 
