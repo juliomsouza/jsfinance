@@ -55,11 +55,17 @@ def category_get(id):
 
     return row
 
+def category_save(idcat, descricao, obs):
+    if idcat is None:
+        category_insert(descricao, obs)
+    else:
+        category_update(idcat, descricao, obs)
 
-def category_update(idcat, descricao):
+
+def category_update(idcat, descricao, obs):
     with connect() as cnx:
         cursor = cnx.cursor()
-        sql = f"UPDATE CATEGORIAS SET DESC_CAT = '{descricao}' WHERE ID_CAT = {idcat}"
+        sql = f"UPDATE CATEGORIAS SET DESC_CAT = '{descricao}', OBS_CAT = '{obs}' WHERE ID_CAT = {idcat}"
 
         cursor.execute(sql)
 
