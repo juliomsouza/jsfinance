@@ -11,7 +11,8 @@ def dburl(url):
         password=(u.password or ''),
         host=u.hostname,
         port=str(u.port),
-        database=u.path[1:]
+        database=u.path[1:],
+        auth_plugin='mysql_native_password'
     )
 
 
